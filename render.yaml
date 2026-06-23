@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bookwise
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && node scripts/render_build.js || echo "[warn] seed skipped"
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALADIN_API_KEY
+        value: ttb11dlguswns1147001
+      - key: NODE_ENV
+        value: production

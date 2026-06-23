@@ -1,0 +1,355 @@
+/* ================================================================
+ * BookWise — Design Token System
+ * public/style/tokens.css
+ *
+ * 이 파일은 Vue SPA의 단독 임포트 기준 토큰 파일입니다.
+ * public/style.css(풀 컴포넌트 라이브러리)와 네임스페이스를 공유하며
+ * 중복 정의 없이 동일 값을 사용합니다.
+ *
+ * Namespace (Bootstrap --bs-* 비침범):
+ *   --clr-*       구조 팔레트  (raw oklch — 색상 원자)
+ *   --tone-*      의미 토큰    (context-mapped semantic)
+ *   --tone-rec-*  추천 배지 전용 (TF-IDF score float 0.0–1.0)
+ *
+ * 추천 임계값 계약 (AI 엔지니어·프론트엔드 합의 확정):
+ *   high  : score ≥ 0.6  →  --tone-rec-high-*
+ *   mid   : score ≥ 0.4  →  --tone-rec-mid-*
+ *   low   : score  < 0.4  →  --tone-rec-low-*
+ *
+ * 배지 패턴: JS는 data-tier="high|mid|low" 속성값만 결정
+ *            색상 선택·조합은 전량 CSS var가 담당 (JS 색상 하드코딩 0건)
+ * ================================================================ */
+
+/* ────────────────────────────────────────────────────────────────
+   §1  구조 팔레트 — --clr-* 원자 (oklch 퍼셉추얼 균등)
+   ──────────────────────────────────────────────────────────────── */
+:root {
+
+  /* Primary — Indigo/Violet (H=285, 지적·프리미엄)
+     primary = 브랜드 메인 컬러 */
+  --clr-primary-10: oklch(0.940 0.040 285);
+  --clr-primary-20: oklch(0.880 0.080 285);
+  --clr-primary-30: oklch(0.780 0.130 285);
+  --clr-primary-40: oklch(0.660 0.180 285);
+  --clr-primary-50: oklch(0.550 0.220 285);  /* ← 기본값 */
+  --clr-primary-60: oklch(0.460 0.210 285);
+  --clr-primary-70: oklch(0.360 0.190 285);
+  --clr-primary-80: oklch(0.260 0.160 285);
+
+  /* Secondary — Teal/Cyan (H=195, 보조·정보)
+     secondary = 커뮤니티·정보성 UI 강조 */
+  --clr-secondary-10: oklch(0.950 0.035 195);
+  --clr-secondary-20: oklch(0.900 0.070 195);
+  --clr-secondary-30: oklch(0.800 0.115 195);
+  --clr-secondary-40: oklch(0.680 0.155 195);
+  --clr-secondary-50: oklch(0.560 0.175 195);  /* ← 기본값 */
+  --clr-secondary-60: oklch(0.450 0.155 195);
+  --clr-secondary-70: oklch(0.340 0.130 195);
+
+  /* Accent — Amber/Gold (H=75, 따뜻함·CTA·하이라이트) */
+  --clr-accent-10: oklch(0.970 0.040 80);
+  --clr-accent-20: oklch(0.940 0.080 80);
+  --clr-accent-40: oklch(0.840 0.150 78);
+  --clr-accent-50: oklch(0.760 0.175 75);  /* ← 기본값 */
+  --clr-accent-60: oklch(0.640 0.160 68);
+  --clr-accent-70: oklch(0.520 0.140 62);
+
+  /* Neutral — 약간 쿨톤 (H=240) */
+  --clr-n-0:   oklch(1.000 0.000 240);
+  --clr-n-5:   oklch(0.980 0.005 240);
+  --clr-n-10:  oklch(0.960 0.008 240);
+  --clr-n-20:  oklch(0.920 0.010 240);
+  --clr-n-30:  oklch(0.860 0.012 240);
+  --clr-n-40:  oklch(0.760 0.014 240);
+  --clr-n-50:  oklch(0.640 0.016 240);
+  --clr-n-60:  oklch(0.520 0.015 240);
+  --clr-n-70:  oklch(0.400 0.014 240);
+  --clr-n-80:  oklch(0.280 0.012 240);
+  --clr-n-90:  oklch(0.180 0.010 240);
+  --clr-n-100: oklch(0.100 0.008 240);
+
+  /* 추천 배지 팔레트 원자 */
+  --clr-success-10: oklch(0.960 0.040 150);
+  --clr-success-20: oklch(0.930 0.070 150);
+  --clr-success-50: oklch(0.640 0.185 150);
+  --clr-success-60: oklch(0.530 0.165 150);
+  --clr-success-70: oklch(0.420 0.140 150);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   §2  의미 토큰 — --tone-* (라이트 모드 기본값)
+   ──────────────────────────────────────────────────────────────── */
+:root {
+
+  /* ── Surface / Background / Border ── */
+  --clr-background:      oklch(0.970 0.006 240);   /* 전체 페이지 배경 */
+  --clr-surface:         var(--clr-n-0);            /* 카드·패널 배경 */
+  --clr-surface-raised:  var(--clr-n-5);            /* 호버/포커스 상태 카드 */
+  --clr-surface-overlay: var(--clr-n-10);           /* 모달 오버레이 영역 */
+  --clr-border:          var(--clr-n-20);           /* 기본 구분선·아웃라인 */
+  --clr-border-strong:   var(--clr-n-40);           /* 강조 구분선 */
+  --clr-border-focus:    var(--clr-primary-50);     /* 포커스 링 */
+
+  /* ── Brand (primary) ── */
+  --tone-brand:          var(--clr-primary-50);
+  --tone-brand-hover:    var(--clr-primary-60);
+  --tone-brand-active:   var(--clr-primary-70);
+  --tone-brand-surface:  var(--clr-primary-10);
+  --tone-brand-text:     var(--clr-primary-60);
+  --tone-on-brand:       var(--clr-n-0);
+
+  /* ── Secondary ── */
+  --tone-secondary:        var(--clr-secondary-50);
+  --tone-secondary-hover:  var(--clr-secondary-60);
+  --tone-secondary-surface: var(--clr-secondary-10);
+  --tone-on-secondary:     var(--clr-n-0);
+
+  /* ── Accent ── */
+  --tone-accent:          var(--clr-accent-50);
+  --tone-accent-hover:    var(--clr-accent-60);
+  --tone-accent-surface:  var(--clr-accent-10);
+  --tone-on-accent:       var(--clr-n-100);
+
+  /* ── Text ── */
+  --tone-text:        var(--clr-n-90);
+  --tone-text-muted:  var(--clr-n-60);
+  --tone-text-faint:  var(--clr-n-40);
+  --tone-text-invert: var(--clr-n-0);
+
+  /* ── Elevation ── */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.10);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.07), 0 2px 4px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.10), 0 4px 6px rgb(0 0 0 / 0.05);
+  --shadow-focus: 0 0 0 3px oklch(0.55 0.22 285 / 0.28);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   §3  추천 배지 토큰 — --tone-rec-*
+   TF-IDF 코사인 유사도 float 0.0–1.0 → 3단 임계값
+   임계값 계약: ≥0.6 high | ≥0.4 mid | <0.4 low
+   ──────────────────────────────────────────────────────────────── */
+:root {
+
+  /* high — score ≥ 0.6  (에메랄드 그린, 강한 연관성) */
+  --tone-rec-high:         var(--clr-success-50);    /* 배지 배경 */
+  --tone-rec-high-surface: var(--clr-success-20);    /* 배지 라이트 배경 */
+  --tone-rec-high-text:    var(--clr-success-70);    /* 배지 텍스트 */
+  --tone-rec-high-border:  var(--clr-success-60);    /* 배지 테두리 */
+  --tone-rec-high-on:      var(--clr-n-0);           /* filled 배지 위 텍스트 */
+
+  /* mid  — score ≥ 0.4  (앰버 골드, 중간 연관성) */
+  --tone-rec-mid:         var(--clr-accent-50);
+  --tone-rec-mid-surface: var(--clr-accent-20);
+  --tone-rec-mid-text:    var(--clr-accent-70);
+  --tone-rec-mid-border:  var(--clr-accent-60);
+  --tone-rec-mid-on:      var(--clr-n-100);
+
+  /* low  — score  < 0.4  (중립 회색, 낮은 연관성) */
+  --tone-rec-low:         var(--clr-n-50);
+  --tone-rec-low-surface: var(--clr-n-10);
+  --tone-rec-low-text:    var(--clr-n-70);
+  --tone-rec-low-border:  var(--clr-n-40);
+  --tone-rec-low-on:      var(--clr-n-0);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   §4  추천 배지 컴포넌트 — CSS var 전담, JS 색상 하드코딩 0건
+   사용법 (Vue/HTML):
+     <span class="rec-badge" data-tier="high">92% 일치</span>
+     <span class="rec-badge" data-tier="mid">54% 일치</span>
+     <span class="rec-badge" data-tier="low">28% 일치</span>
+
+   JS 담당: score → data-tier 속성값("high"|"mid"|"low") 결정만
+   CSS 담당: tier 별 색상·테두리·텍스트 전량
+   ──────────────────────────────────────────────────────────────── */
+.rec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.18em 0.6em;
+  border-radius: 9999px;         /* --rd-full 사전 정의 없는 환경에서도 동작 */
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+/* high tier */
+.rec-badge[data-tier="high"] {
+  background-color: var(--tone-rec-high-surface);
+  color:            var(--tone-rec-high-text);
+  border-color:     var(--tone-rec-high-border);
+}
+
+/* mid tier */
+.rec-badge[data-tier="mid"] {
+  background-color: var(--tone-rec-mid-surface);
+  color:            var(--tone-rec-mid-text);
+  border-color:     var(--tone-rec-mid-border);
+}
+
+/* low tier */
+.rec-badge[data-tier="low"] {
+  background-color: var(--tone-rec-low-surface);
+  color:            var(--tone-rec-low-text);
+  border-color:     var(--tone-rec-low-border);
+}
+
+/* filled 변형 — 배지 배경이 강조색일 때 */
+.rec-badge--filled[data-tier="high"] {
+  background-color: var(--tone-rec-high);
+  color:            var(--tone-rec-high-on);
+  border-color:     transparent;
+}
+.rec-badge--filled[data-tier="mid"] {
+  background-color: var(--tone-rec-mid);
+  color:            var(--tone-rec-mid-on);
+  border-color:     transparent;
+}
+.rec-badge--filled[data-tier="low"] {
+  background-color: var(--tone-rec-low);
+  color:            var(--tone-rec-low-on);
+  border-color:     transparent;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   §5  다크 모드 — @media (prefers-color-scheme: dark)
+   구조 팔레트(--clr-primary-* 등) 재정의 없음
+   의미 토큰(--tone-*·--clr-background 등)만 오버라이드
+   Bootstrap 5.3 다크 모드와 네임스페이스 비충돌 확인됨
+   ──────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surface / Background / Border */
+    --clr-background:      oklch(0.110 0.008 240);
+    --clr-surface:         oklch(0.160 0.010 240);
+    --clr-surface-raised:  oklch(0.200 0.012 240);
+    --clr-surface-overlay: oklch(0.240 0.012 240);
+    --clr-border:          oklch(0.280 0.012 240);
+    --clr-border-strong:   oklch(0.400 0.014 240);
+    --clr-border-focus:    var(--clr-primary-40);
+
+    /* Brand */
+    --tone-brand:          var(--clr-primary-40);
+    --tone-brand-hover:    var(--clr-primary-30);
+    --tone-brand-active:   var(--clr-primary-20);
+    --tone-brand-surface:  oklch(0.200 0.065 285);
+    --tone-brand-text:     var(--clr-primary-30);
+
+    /* Secondary */
+    --tone-secondary:         var(--clr-secondary-40);
+    --tone-secondary-hover:   var(--clr-secondary-30);
+    --tone-secondary-surface: oklch(0.200 0.060 195);
+
+    /* Accent */
+    --tone-accent:          var(--clr-accent-40);
+    --tone-accent-hover:    var(--clr-accent-50);
+    --tone-accent-surface:  oklch(0.200 0.065 80);
+
+    /* Text */
+    --tone-text:        var(--clr-n-5);
+    --tone-text-muted:  var(--clr-n-40);
+    --tone-text-faint:  var(--clr-n-60);
+    --tone-text-invert: var(--clr-n-90);
+
+    /* Elevation — 다크에서 shadow 강화 (배경이 어두워 기본 shadow 약화) */
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.30), 0 1px 3px rgb(0 0 0 / 0.20);
+    --shadow-md: 0 4px 6px rgb(0 0 0 / 0.35), 0 2px 4px rgb(0 0 0 / 0.25);
+    --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.40), 0 4px 6px rgb(0 0 0 / 0.30);
+    --shadow-focus: 0 0 0 3px oklch(0.66 0.18 285 / 0.38);
+
+    /* ── 추천 배지 토큰 다크 오버라이드 ──────────────────────── */
+    /* high — 다크에서 채도·명도 조정, 자동 추종 */
+    --tone-rec-high:         oklch(0.560 0.170 150);
+    --tone-rec-high-surface: oklch(0.180 0.060 150);
+    --tone-rec-high-text:    oklch(0.820 0.120 150);
+    --tone-rec-high-border:  oklch(0.430 0.145 150);
+    --tone-rec-high-on:      oklch(0.100 0.040 150);
+
+    /* mid */
+    --tone-rec-mid:         oklch(0.720 0.165 75);
+    --tone-rec-mid-surface: oklch(0.200 0.065 80);
+    --tone-rec-mid-text:    oklch(0.870 0.130 78);
+    --tone-rec-mid-border:  oklch(0.580 0.140 72);
+    --tone-rec-mid-on:      oklch(0.120 0.050 75);
+
+    /* low */
+    --tone-rec-low:         oklch(0.420 0.016 240);
+    --tone-rec-low-surface: oklch(0.220 0.010 240);
+    --tone-rec-low-text:    oklch(0.680 0.014 240);
+    --tone-rec-low-border:  oklch(0.360 0.014 240);
+    --tone-rec-low-on:      oklch(0.920 0.006 240);
+  }
+}
+
+/* JS로 토글하는 다크 모드 지원 (data-theme="dark" on <html>) */
+[data-theme="dark"] {
+  --clr-background:      oklch(0.110 0.008 240);
+  --clr-surface:         oklch(0.160 0.010 240);
+  --clr-surface-raised:  oklch(0.200 0.012 240);
+  --clr-surface-overlay: oklch(0.240 0.012 240);
+  --clr-border:          oklch(0.280 0.012 240);
+  --clr-border-strong:   oklch(0.400 0.014 240);
+  --clr-border-focus:    var(--clr-primary-40);
+
+  --tone-brand:          var(--clr-primary-40);
+  --tone-brand-hover:    var(--clr-primary-30);
+  --tone-brand-active:   var(--clr-primary-20);
+  --tone-brand-surface:  oklch(0.200 0.065 285);
+  --tone-brand-text:     var(--clr-primary-30);
+
+  --tone-secondary:         var(--clr-secondary-40);
+  --tone-secondary-hover:   var(--clr-secondary-30);
+  --tone-secondary-surface: oklch(0.200 0.060 195);
+
+  --tone-accent:          var(--clr-accent-40);
+  --tone-accent-hover:    var(--clr-accent-50);
+  --tone-accent-surface:  oklch(0.200 0.065 80);
+
+  --tone-text:        var(--clr-n-5);
+  --tone-text-muted:  var(--clr-n-40);
+  --tone-text-faint:  var(--clr-n-60);
+  --tone-text-invert: var(--clr-n-90);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.30), 0 1px 3px rgb(0 0 0 / 0.20);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.35), 0 2px 4px rgb(0 0 0 / 0.25);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.40), 0 4px 6px rgb(0 0 0 / 0.30);
+  --shadow-focus: 0 0 0 3px oklch(0.66 0.18 285 / 0.38);
+
+  --tone-rec-high:         oklch(0.560 0.170 150);
+  --tone-rec-high-surface: oklch(0.180 0.060 150);
+  --tone-rec-high-text:    oklch(0.820 0.120 150);
+  --tone-rec-high-border:  oklch(0.430 0.145 150);
+  --tone-rec-high-on:      oklch(0.100 0.040 150);
+
+  --tone-rec-mid:         oklch(0.720 0.165 75);
+  --tone-rec-mid-surface: oklch(0.200 0.065 80);
+  --tone-rec-mid-text:    oklch(0.870 0.130 78);
+  --tone-rec-mid-border:  oklch(0.580 0.140 72);
+  --tone-rec-mid-on:      oklch(0.120 0.050 75);
+
+  --tone-rec-low:         oklch(0.420 0.016 240);
+  --tone-rec-low-surface: oklch(0.220 0.010 240);
+  --tone-rec-low-text:    oklch(0.680 0.014 240);
+  --tone-rec-low-border:  oklch(0.360 0.014 240);
+  --tone-rec-low-on:      oklch(0.920 0.006 240);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   §6  모션 접근성 — prefers-reduced-motion
+   ──────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .rec-badge {
+    transition: none;
+  }
+}
+
+/* ================================================================
+ * Bootstrap 5.3 충돌 방지 확인
+ *   Bootstrap: --bs-primary, --bs-secondary, --bs-body-bg, --bs-border-radius ...
+ *   이 파일: --clr-*, --tone-*, --shadow-*, --chart-*
+ *   → 네임스페이스 완전 비충돌
+ * ================================================================ */

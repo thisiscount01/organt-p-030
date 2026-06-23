@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookWise — AI 도서 추천</title>
+
+  <!-- Bootstrap 5.3 (로컬 vendor) -->
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons (로컬 vendor) -->
+  <link href="/vendor/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- 디자이너 토큰 (있으면 포함) -->
+  <link rel="stylesheet" href="/style/tokens.css" onerror="this.remove()" />
+  <!-- 앱 스타일 -->
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    :root {
+      --bw-primary: #4f46e5;
+      --bw-primary-light: #6366f1;
+      --bw-secondary: #0f172a;
+      --bw-accent: #f59e0b;
+      --bw-bg: #f8fafc;
+      --bw-card-bg: #ffffff;
+      --bw-border: #e2e8f0;
+      --bw-text: #1e293b;
+      --bw-text-muted: #64748b;
+      --bw-radius: 12px;
+      --bw-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(79,70,229,.06);
+    }
+
+    body {
+      background: var(--bw-bg);
+      color: var(--bw-text);
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    }
+
+    /* 네비게이션 */
+    .navbar-bw {
+      background: var(--bw-secondary);
+      box-shadow: 0 1px 0 rgba(255,255,255,.08);
+    }
+    .navbar-bw .navbar-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #fff !important;
+      letter-spacing: -.5px;
+    }
+    .navbar-bw .nav-link {
+      color: rgba(255,255,255,.75) !important;
+      font-weight: 500;
+      transition: color .15s;
+    }
+    .navbar-bw .nav-link:hover,
+    .navbar-bw .nav-link.router-link-active {
+      color: #fff !important;
+    }
+
+    /* 도서 카드 */
+    .book-card {
+      background: var(--bw-card-bg);
+      border: 1px solid var(--bw-border);
+      border-radius: var(--bw-radius);
+      box-shadow: var(--bw-shadow);
+      transition: transform .18s, box-shadow .18s;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .book-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(79,70,229,.14);
+    }
+    .book-card .cover-wrap {
+      position: relative;
+      padding-top: 66%;
+      background: #f1f5f9;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .book-card .cover-wrap img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .book-card .cover-wrap .cover-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .book-card .card-body {
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .book-card .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: .35rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .book-card .card-author {
+      font-size: .8rem;
+      color: var(--bw-text-muted);
+      margin-bottom: .35rem;
+    }
+    .book-card .card-publisher {
+      font-size: .75rem;
+      color: var(--bw-text-muted);
+      margin-bottom: .15rem;
+    }
+    .book-card .card-pubdate {
+      font-size: .72rem;
+      color: #94a3b8;
+      margin-bottom: .35rem;
+    }
+
+    /* 장르 배지 */
+    .genre-badge {
+      font-size: .7rem;
+      padding: .2em .55em;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: var(--bw-primary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* tier 배지 */
+    [data-tier="high"] .tier-badge  { background: #dcfce7; color: #15803d; }
+    [data-tier="mid"]  .tier-badge  { background: #fef9c3; color: #92400e; }
+    [data-tier="low"]  .tier-badge  { background: #f1f5f9; color: #64748b; }
+    .tier-badge {
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .2em .6em;
+      border-radius: 6px;
+    }
+
+    /* 히어로 섹션 */
+    .hero-section {
+      background: linear-gradient(135deg, var(--bw-secondary) 0%, #1e40af 60%, var(--bw-primary) 100%);
+      color: #fff;
+      padding: 4rem 0 3.5rem;
+    }
+    .hero-section h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -.5px; }
+    .hero-section p  { opacity: .85; font-size: 1.05rem; }
+
+    /* 검색창 */
+    .search-wrap { position: relative; }
+    .search-wrap .bi-search {
+      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+      color: var(--bw-text-muted); pointer-events: none;
+    }
+    .search-wrap input { padding-left: 2.4rem; }
+
+    /* 추천 카드 (상세 페이지) */
+    .rec-card {
+      border: 1px solid var(--bw-border);
+      border-radius: 10px;
+      padding: .85rem;
+      background: var(--bw-card-bg);
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      transition: box-shadow .15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .rec-card:hover { box-shadow: 0 4px 12px rgba(79,70,229,.12); color: inherit; }
+    .rec-card img { width: 52px; height: 72px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+    .rec-card .rec-info { flex: 1; min-width: 0; }
+    .rec-card .rec-title { font-weight: 600; font-size: .88rem; line-height: 1.3; margin-bottom: .25rem; }
+    .rec-card .rec-reason { font-size: .78rem; color: var(--bw-text-muted); }
+
+    /* 커뮤니티 */
+    .post-card {
+      background: var(--bw-card-bg);
+      border: 1px solid var(--bw-border);
+      border-radius: var(--bw-radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: box-shadow .15s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .post-card:hover { box-shadow: 0 4px 14px rgba(79,70,229,.1); color: inherit; }
+    .post-card .post-title { font-weight: 600; margin-bottom: .35rem; }
+    .post-card .post-meta { font-size: .8rem; color: var(--bw-text-muted); }
+
+    /* 404 */
+    .not-found { text-align: center; padding: 5rem 1rem; }
+    .not-found .code { font-size: 5rem; font-weight: 800; color: #e2e8f0; }
+
+    /* 로딩 */
+    .spinner-wrap { display: flex; justify-content: center; padding: 4rem 0; }
+
+    /* 섹션 제목 */
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    /* 트렌드 아이템 */
+    .trend-item {
+      transition: box-shadow .15s, transform .15s;
+      color: inherit;
+    }
+    .trend-item:hover { box-shadow: 0 4px 12px rgba(79,70,229,.12); transform: translateX(2px); color: inherit; }
+    .trend-rank {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #c7d2fe;
+      min-width: 2rem;
+      text-align: center;
+    }
+
+    /* 독서 달력 */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-dow {
+      text-align: center;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--bw-text-muted);
+      padding: .4rem 0;
+    }
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .12s, border-color .12s;
+      position: relative;
+      background: #fff;
+    }
+    .cal-cell:hover { background: #ede9fe; border-color: var(--bw-primary); }
+    .cal-other { background: #f8fafc !important; opacity: .4; cursor: default; }
+    .cal-today .cal-day-num {
+      background: var(--bw-primary);
+      color: #fff;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    .cal-selected { border-color: var(--bw-primary) !important; background: #ede9fe !important; }
+    .cal-day-num { font-size: .85rem; font-weight: 500; }
+    .cal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      position: absolute;
+      bottom: 4px;
+    }
+
+    /* 인증 모달 */
+    .modal-auth { max-width: 420px; }
+
+    /* 장르 가로 스크롤 (모바일) */
+    .bw-genre-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .bw-genre-scroll::-webkit-scrollbar { display: none; }
+
+    /* 스크롤 부드럽게 */
+    html { scroll-behavior: smooth; }
+
+    /* ── 반응형 (모바일 375px) ── */
+    @media (max-width: 576px) {
+      .hero-section h1 { font-size: 1.7rem; }
+      .hero-section { padding: 2.5rem 0 2rem; }
+      .hero-section .btn { font-size: .9rem; padding: .5rem 1.1rem; }
+
+      /* 도서 카드 2열 */
+      .row-cols-2 > .col { flex: 0 0 50%; max-width: 50%; }
+
+      /* 모달 전체 너비 */
+      .modal-auth { max-width: 100%; margin: 0; }
+      .modal-dialog.modal-auth { margin: 0; }
+      .modal-content { border-radius: 0; min-height: 100vh; }
+
+      /* 네비바 햄버거 전용 */
+      .navbar-bw .navbar-nav {
+        padding: .75rem 0;
+        gap: .25rem !important;
+      }
+      .navbar-bw .navbar-nav .nav-link {
+        padding: .5rem 1rem;
+      }
+
+      /* 검색 + 정렬 — 모바일에서 세로 스택 */
+      .bw-search-row { flex-direction: column; }
+
+      /* 섹션 제목 글자 줄이기 */
+      .section-title { font-size: 1.15rem; }
+
+      /* 달력 날짜 글자 */
+      .cal-day-num { font-size: .72rem; }
+    }
+
+    @media (max-width: 768px) {
+      .modal-auth { max-width: 95vw; }
+    }
+  </style>
+</head>
+<body>
+  <!-- cold-start 빈화면 방지: Vue 마운트 전 즉시 렌더링 -->
+  <div id="bw-splash" style="
+    position:fixed;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    background:#0f172a;color:#fff;z-index:9999;
+    font-family:'Apple SD Gothic Neo',sans-serif;gap:1rem;">
+    <div style="font-size:2.5rem;">📚</div>
+    <div style="font-size:1.2rem;font-weight:600;letter-spacing:.05em;">BookWise</div>
+    <div style="display:flex;gap:.4rem;margin-top:.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#4f46e5;animation:bw-dot 1.2s .0s infinite ease-in-out both;"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:#4f46e5;animation:bw-dot 1.2s .2s infinite ease-in-out both;"></span>
+      <span style="width:8px;height:8px;border-radius:50%;background:#4f46e5;animation:bw-dot 1.2s .4s infinite ease-in-out both;"></span>
+    </div>
+    <div data-bw-status style="font-size:.85rem;color:#94a3b8;margin-top:.25rem;">서버 준비 중…</div>
+    <div style="font-size:.78rem;color:#64748b;margin-top:.5rem;text-align:center;max-width:280px;line-height:1.5;">
+      Render 무료 서버 특성상 첫 접속 시 최대 30초가 소요될 수 있습니다. 잠시만 기다려주세요.
+    </div>
+  </div>
+  <style>
+  @keyframes bw-dot{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+  </style>
+  <script>
+  (function(){
+    var el = document.querySelector('[data-bw-status]');
+    if (!el) return;
+    var start = Date.now();
+    var iv = setInterval(function(){
+      var sec = Math.floor((Date.now() - start) / 1000);
+      if (sec > 10) {
+        el.textContent = 'Render 서버 첫 기동 중… 최대 30초 소요 (' + sec + '초)';
+        el.style.color = '#f59e0b';
+      } else if (sec > 30) {
+        el.textContent = '서버 응답 지연 중… 잠시만 기다려 주세요 (' + sec + '초)';
+        el.style.color = '#ef4444';
+      }
+    }, 1000);
+    /* app.js healthPoll이 마운트하면 이 타이머는 자동 종료 */
+    window.__bwStopTimer = function(){ clearInterval(iv); };
+    setTimeout(function(){ clearInterval(iv); }, 90000);
+  })();
+  </script>
+
+  <div id="app"></div>
+
+  <!-- 로컬 vendor: Vue 3 + Vue Router 4 + Axios + Bootstrap JS -->
+  <script src="/vendor/vue.global.prod.js"></script>
+  <script src="/vendor/vue-router.global.prod.js"></script>
+  <script src="/vendor/axios.min.js"></script>
+  <script src="/vendor/bootstrap.bundle.min.js"></script>
+  <script src="/app.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+  </script>
+</body>
+</html>

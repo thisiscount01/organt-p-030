@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "userId": 6,
+    "username": "testuser",
+    "isbn": "9791165343919",
+    "bookTitle": "테스트책",
+    "date": "2026-06-23",
+    "status": "reading",
+    "created_at": "2026-06-23T03:50:15.470Z"
+  },
+  {
+    "id": 2,
+    "userId": 11,
+    "username": "e2etest",
+    "isbn": "K982130876",
+    "bookTitle": "테스트",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T04:48:44.455Z"
+  },
+  {
+    "id": 3,
+    "userId": 15,
+    "username": "qatest99",
+    "isbn": "K982130876",
+    "bookTitle": "테스트",
+    "date": "2026-06-23",
+    "status": "reading",
+    "created_at": "2026-06-23T05:10:16.434Z"
+  },
+  {
+    "id": 4,
+    "userId": 20,
+    "username": "qatester99",
+    "isbn": "9791130627915",
+    "bookTitle": "",
+    "date": "2026-06-23",
+    "status": "reading",
+    "created_at": "2026-06-23T05:22:56.930Z"
+  },
+  {
+    "id": 5,
+    "userId": 24,
+    "username": "qauser1782192736",
+    "isbn": "9791172134297",
+    "bookTitle": "테스트도서",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T05:32:17.279Z"
+  },
+  {
+    "id": 6,
+    "userId": 24,
+    "username": "qauser1782192736",
+    "isbn": "9791172134297",
+    "bookTitle": "테스트2",
+    "date": "2026-06-24",
+    "status": "reading",
+    "created_at": "2026-06-23T05:32:17.285Z"
+  },
+  {
+    "id": 7,
+    "userId": 63,
+    "username": "journey01",
+    "isbn": "9788954698726",
+    "bookTitle": "",
+    "date": "2026-06-23",
+    "status": "reading",
+    "created_at": "2026-06-23T08:40:35.927Z"
+  },
+  {
+    "id": 8,
+    "userId": 71,
+    "username": "testuser_qa",
+    "isbn": "9791168470248",
+    "bookTitle": "",
+    "date": "2026-06-23",
+    "status": "reading",
+    "created_at": "2026-06-23T09:05:11.327Z"
+  },
+  {
+    "id": 9,
+    "userId": 74,
+    "username": "journey_user",
+    "isbn": "9788937460784",
+    "bookTitle": "어린왕자",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T09:11:53.971Z"
+  },
+  {
+    "id": 10,
+    "userId": 75,
+    "username": "testfe99",
+    "isbn": "K982130876",
+    "bookTitle": "패밀리 레스토랑 가자",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T09:31:45.070Z"
+  },
+  {
+    "id": 11,
+    "userId": 82,
+    "username": "verifytester",
+    "isbn": "9788936433598",
+    "bookTitle": "채식주의자",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T10:40:41.598Z"
+  },
+  {
+    "id": 12,
+    "userId": 88,
+    "username": "testcal77",
+    "isbn": "9791191056235",
+    "bookTitle": "",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T10:44:28.820Z"
+  },
+  {
+    "id": 13,
+    "userId": 89,
+    "username": "calcheck01",
+    "isbn": "9791191056235",
+    "bookTitle": "",
+    "date": "2026-06-23",
+    "status": "done",
+    "created_at": "2026-06-23T10:44:44.120Z"
+  }
+]
